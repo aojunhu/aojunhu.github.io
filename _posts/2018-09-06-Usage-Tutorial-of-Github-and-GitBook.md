@@ -36,7 +36,6 @@ Hi aojunhu! You've successfully authenticated, but GitHub does not provide shell
 Your repositories --> Create a new repository  --> set Repository name --> Create Reopsitory Button
 ### 1.3.2. 版本库初始化
 如果是从头创建版本库，可以采用先克隆，建立提交数据，最后再通过推送完成GitHub版本库的初始化。步骤如下：
-+ 克隆版本库。
 ```
 $ git clone git@github.com:aojunhu/helloworld.git helloworld
 Cloning into 'helloworld'...
