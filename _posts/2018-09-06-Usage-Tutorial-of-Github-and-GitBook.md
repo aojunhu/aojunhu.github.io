@@ -57,10 +57,6 @@ example:
 * item1
 * item2
 
-___test___
-\```
-adb push out/target/product/                                                                               
-\```
 ```
 ### 1.3.4. 添加README.md文件并提交。
 ```
@@ -535,4 +531,3 @@ $ git push -u origin gh-pages
 
 # 4. 利用 GitHub Pages 快速搭建个人博客
 fork别人的模板（qiubaiying.github.io），rename为自己的仓库名(<user-id>.github.io)。
-
