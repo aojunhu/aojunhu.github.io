@@ -1,3 +1,17 @@
+---
+layout:     post
+title:      Github和GitBook使用
+subtitle:   使用Github和Gitbook管理知识库
+date:       2018-09-06
+author:     naiquan.hu
+header-img: img/post-bg-ios9-web.jpg
+catalog: true
+tags:
+    - Git
+    - Github
+    - Gitbook
+---
+
 # 1. GitHub
 ## 1.1. 创建账户
 https://github.com/  在上面注册
