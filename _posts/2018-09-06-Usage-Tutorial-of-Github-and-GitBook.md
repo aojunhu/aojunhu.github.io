@@ -48,10 +48,10 @@ Checking connectivity... done.
 ```
 ### 1.3.3. 创建并修改文件README.md
 ```
-# My first GitHub project
+My first GitHub project
 This is a example repository.
 
-## Support markdown syntax format.
+Support markdown syntax format.
 example:
 这是项目 [helloworld](https://github.com/aojunhu/helloworld)，欢迎访问。
 * item1
