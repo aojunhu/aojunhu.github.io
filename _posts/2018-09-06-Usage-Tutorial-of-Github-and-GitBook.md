@@ -41,7 +41,7 @@ Host github.com
 设置成功后，再用ssh命令访问GitHub，会显示一条认证成功信息并退出。在认证成功的信息中还会显示该公钥对应的用户名。
 ```
 $ ssh -T git@github.com
-Hi aojunhu! You've successfully authenticated, but GitHub does not provide shell access.
+Hi aojunhu! You have successfully authenticated, but GitHub does not provide shell access.
 ```
 
 ## 1.3. 项目托管
@@ -80,41 +80,41 @@ $ git push origin master
 ### 1.3.6. 从已有版本库创建
 如果在GitHub项目初始化之前，数据已经存在于本地版本库中，显然像上面那样先克隆、再提交、后推送的方法就不适宜了。应该采用下面的方法。
 为试验新的版本库初始化方法，先把刚刚新建的测试项目“helloworld”删除，同时也将本地工作区中克隆的“helloworld”删除。警告：删除项目的操作非常危险，不可恢复，慎用。
-* 点击项目首页中"Settings"选项卡，在"Danger Zone"区域有"Delete this repository"
-* 然后再重建版本库“helloworld”，见3.1节。
-* 本地建立一个Git版本库。
+点击项目首页中"Settings"选项卡，在"Danger Zone"区域有"Delete this repository"
+然后再重建版本库“helloworld”，见3.1节。
+本地建立一个Git版本库。
 ```
 $ mkdir helloworld
 $ cd helloworld
 $ git init
 ```
-* 然后在版本库中添加示例文件，如README.md文件，内容同前。
+然后在版本库中添加示例文件，如README.md文件，内容同前。
 ```
 $ git add README.md
 $ git commit -m "README for this project."
 ```
-* 为版本库添加名为origin的远程版本库。
+为版本库添加名为origin的远程版本库。
 ```
 $ git remote add origin git@github.com:aojunhu/helloworld.git
 ```
-* 执行推送命令，完成GitHub版本库的初始化。注意命令行中的-u参数，在推送成功后自动建立本地分支与远程版本库分支的追踪。
+执行推送命令，完成GitHub版本库的初始化。注意命令行中的-u参数，在推送成功后自动建立本地分支与远程版本库分支的追踪。
 ```
 $ git push -u origin master
 ```
 ## 1.4. 操作版本库
 ### 1.4.1. 强制推送
 上文提交时，提交用户设置的邮件地址并非gotgithub用户设置的邮件地址。补救办法就是对此提交进行修改，然后强制推送到GitHub。
-* 重新设置user.name和user.email配置变量。
+重新设置user.name和user.email配置变量。
 ```
 $ git config user.name "naiquan.hu"
 $ git config user.email "naiquan_hu@hotmail.com"
 ```
-* 执行Git修补提交命令。
+执行Git修补提交命令。
 注意使用参数--reset-author会将提交信息中的属性Author连同AuthorDate一并修改，否则只修改Commit和CommitDate。参数-C HEAD维持提交说明不变。
 ```
 $ git commit --amend --reset-author -C HEAD
 ```
-* 查看提交日志，发现提交者信息和作者信息都已经更改。
+查看提交日志，发现提交者信息和作者信息都已经更改。
 ```
 $ git log --pretty=fuller
 commit 959af4fe61bbdc984dcc26acd139ea3e164096f4
@@ -125,20 +125,20 @@ CommitDate: Tue Sep 4 15:58:25 2018 +0800
 
     README for this project.
 ```
-* 使用强制推送。
+使用强制推送。
 ```
 $ git push -f
 ```
 ### 1.4.2. 新建分支
 Git的分支就是保存在.git/refs/heads/命名空间下的引用。引用文件的内容是该分支对应的提交ID。当前版本库中的默认分支master就对应于文件.git/refs/heads/master。
 若在GitHub版本库中创建分支，首先要在本地版本库中创建新的分支（即引用），然后用推送命令将本地创建的新的引用连同所指向的提交推送到GitHub版本库中完成GitHub上分支的创建。操作如下：
-* 本地版本库中建立新分支mybranch1。
+本地版本库中建立新分支mybranch1。
 创建分支有多种方法，如使用git branch命令，但最为便捷的就是git checkout -b命令，同时完成新分支的创建和分支切换。
 ```
 $ git checkout -b mybranch1
 Switched to a new branch 'mybranch1'
 ```
-* 为了易于识别，添加一个新文件hello1，并提交。
+为了易于识别，添加一个新文件hello1，并提交。
 ```
 $ touch hello1
 $ echo "How are you!" > hello1 
@@ -148,7 +148,7 @@ $ git commit -m "add hello1."
  1 file changed, 1 insertion(+)
  create mode 100644 hello1
 ```
-* 通过推送命令，将本地分支mybranch1推送到GitHub远程版本库，完成在GitHub上的新分支创建。
+通过推送命令，将本地分支mybranch1推送到GitHub远程版本库，完成在GitHub上的新分支创建。
 ```
 $ git push -u origin mybranch1
 ```
@@ -165,7 +165,6 @@ Receiving objects: 100% (6/6), done.
 Checking connectivity... done.
 $ cd helloworld-branch1/
 $ git branch
-* mybranch1
 ```
 实际上修改GitHub上版本库的默认分支，就是将GitHub版本库的头指针HEAD指向了其他分支，如mybranch1分支。这可以从下面命令看出。
 ```
@@ -203,30 +202,31 @@ $ git push origin :mybranch1
 ```
 ### 1.4.5. 里程碑管理
 里程碑即tag，其管理和分支管理非常类似。里程碑和分支一样也是以引用的形式存在的，保存在.git/refs/tags/路径下。引用可能指向一个提交，但也可能是其他类型（Tag对象）。
-* 轻量级里程碑：用git tag <tagname> [<commit>] 命令创建，引用直接指向一个提交对象<commit>。
-* 带说明的里程碑：用git tag -a <tagname> [<commit>] 命令创建，并且在创建时需要提供创建里程碑的说明。Git会创建一个tag对象保存里程碑说明、里程碑的指向、创建里程碑的用户等信息，里程碑引用指向该Tag对象。
-* 带签名的里程碑：用git tag -s <tagname> [<commit>] 命令创建。是在带说明的里程碑的基础上引入了PGP签名，保证了所创建的里程碑的完整性和不可拒绝性。
+1. 轻量级里程碑：用git tag <tagname> [<commit>] 命令创建，引用直接指向一个提交对象<commit>。
+2. 带说明的里程碑：用git tag -a <tagname> [<commit>] 命令创建，并且在创建时需要提供创建里程碑的说明。Git会创建一个tag对象保存里程碑说明、里程碑的指向、创建里程碑的用户等信息，里程碑引用指向该Tag对象。
+3. 带签名的里程碑：用git tag -s <tagname> [<commit>] 命令创建。是在带说明的里程碑的基础上引入了PGP签名，保证了所创建的里程碑的完整性和不可拒绝性。
+
 下面演示一下里程碑的创建和管理。
-* 先在本地创建一个新提交。
+1. 先在本地创建一个新提交。
 ```
 $ touch hello1
 $ git add hello1
 $ git commit -m "add hello1 for mark."
 ```
-* 本地创建里程碑mytag1、mytag2和mytag3。
+2. 本地创建里程碑mytag1、mytag2和mytag3。
 ```
 $ git tag -m "Tag on initial commit" mytag1 HEAD^
 $ git tag -m "Tag on new commit"     mytag2
 $ git tag mytag3
 ```
-* 查看新建立的里程碑。
+3. 查看新建立的里程碑。
 ```
 $ git tag -l -n1
 mytag1          Tag on initial commit
 mytag2          Tag on new commit
 mytag3          add hello1 for mark.
 ```
-* 将本地里程碑推送到GitHub远程版本库。
+4. 将本地里程碑推送到GitHub远程版本库。
 ```
 $ git push origin refs/tags/*
 Counting objects: 6, done.
@@ -239,12 +239,12 @@ To git@github.com:gotgithub/helloworld.git
  * [new tag]         mytag2 -> mytag2
  * [new tag]         mytag3 -> mytag3
 ```
-* 删除本地里程碑。
+5. 删除本地里程碑。
 ```
 $ git tag -d mytag3
 Deleted tag 'mytag3' (was c71231c)
 ```
-* 删除GitHub远程版本库中的里程碑。
+6. 删除GitHub远程版本库中的里程碑。
 ```
 $ git push origin :mytag3
 To git@github.com:gotgithub/helloworld.git
@@ -255,8 +255,8 @@ To git@github.com:gotgithub/helloworld.git
 ## 1.5. 建立主页
 ### 1.5.1. 创建个人主页
 GitHub 为每一个用户分配了一个二级域名<user-id>.github.io，用户为自己的二级域名创建主页很容易，只要在托管空间下创建一个名为<user-id>.github.io的版本库，向其master分支提交网站静态页面即可，其中网站首页为index.html。下面以aojunhu用户为例介绍如何创建个人主页。
-* 用户aojunhu创建一个名为aojunhu.github.io的Git版本库。
-* 在本地克隆新建立的版本库。
+1. 用户aojunhu创建一个名为aojunhu.github.io的Git版本库。
+2. 在本地克隆新建立的版本库。
 ```
 $ git clone git@github.com:aojunhu/aojunhu.github.io.git aojunhu.github.io
 Cloning into 'aojunhu.github.io'...
@@ -266,20 +266,20 @@ Receiving objects: 100% (3/3), done.
 Checking connectivity... done.
 $ cd aojunhu.github.io/
 ```
-* 在版本库根目录中创建文件index.html作为首页。
+3. 在版本库根目录中创建文件index.html作为首页。
 ```
 $ printf "<h1>GotGitHub's HomePage</h1>It works.\n" > index.html
 ```
-* 提交
+4. 提交
 ```
 $ git add index.html
 $ git commit -m "Homepage test version."
 ```
-* 推送到GitHub，完成远程版本库创建。
+5. 推送到GitHub，完成远程版本库创建。
 ```
 $ git push origin master
 ```
-* 访问网址： [http://aojunhu.github.io/](http://aojunhu.github.io/) 。
+6. 访问网址： [http://aojunhu.github.io/](http://aojunhu.github.io/) 。
 
 ### 1.5.2. 创建项目主页
 如前所述，GitHub会为每个账号分配一个二级域名<user-id>.github.io作为用户的首页地址。实际上还可以为每个项目设置主页，项目主页也通过此二级域名进行访问。
@@ -300,27 +300,27 @@ $ cd helloworld
 若使用命令行创建干净的gh-pages分支，可以从下面三个方法任选一种。
 
 第一种方法用到两个Git底层命令：git write-tree和git commit-tree。步骤如下：
-* 基于master分支建立分支gh-pages。
+1. 基于master分支建立分支gh-pages。
 ```
 $ git checkout -b gh-pages
 ```
-* 删除暂存区文件，即相当于清空暂存区。
+2. 删除暂存区文件，即相当于清空暂存区。
 ```
 $ rm .git/index
 ```
-* 创建项目首页index.html。
+3. 创建项目首页index.html。
 ```
 $ printf "hello world.\n" > index.html
 ```
-* 添加文件index.html到暂存区。
+4. 添加文件index.html到暂存区。
 ```
 $ git add index.html
 ```
-* 用Git底层命令创建新的根提交，并将分支gh-pages重置。
+5. 用Git底层命令创建新的根提交，并将分支gh-pages重置。
 ```
 $ git reset --hard $(echo "branch gh-pages init." | git commit-tree $(git write-tree))
 ```
-* 执行推送命令，在GitHub远程版本库创建分支gh-pages。
+6. 执行推送命令，在GitHub远程版本库创建分支gh-pages。
 ```
 $ git push -u origin gh-pages
 ```
@@ -429,21 +429,19 @@ Serving book on http://localhost:4000
 # 3. GitHub + GitBook管理图书
 ## 3.1. 书籍内容存储
 使用github提供的git仓库管理书籍内容，增加、修改书籍内容，提交至git仓库即可。
-+ github上创建仓库arm-cm4-guide
-+ checkout arm-cm4-guide到本地
+1. github上创建仓库arm-cm4-guide
+2. checkout arm-cm4-guide到本地
 ```
 $ git clone git@github.com:aojunhu/arm-cm4-guide.git arm-cm4-guide
 ```
-+ 编写书籍内容
+3. 编写书籍内容
 ```
 $ cd arm-cm4-guide/
 $ cat README.md 
-# arm-cm4-guide
 
 ARM Cortex-M3与Cortex-M4权威指南（第三版）
 
 $ cat SUMMARY.md 
-# SUMMARY
 
 * [ARM Cortex-M 处理器简介](chapter1/README.md)
     * [什么是ARM Cortex-M处理器](chapter1/section1.md)
@@ -486,7 +484,7 @@ $ tree
 
 2 directories, 9 files
 ```
-+ 提交到arm-cm4-guide仓库
+4. 提交到arm-cm4-guide仓库
 ```
 $ git add README.md SUMMARY.md chapter1/ chapter2/
 $ git commit -m "add book content."
