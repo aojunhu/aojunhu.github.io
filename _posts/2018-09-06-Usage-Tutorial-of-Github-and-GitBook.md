@@ -435,6 +435,7 @@ Serving book on http://localhost:4000
 $ git clone git@github.com:aojunhu/arm-cm4-guide.git arm-cm4-guide
 ```
 3. 编写书籍内容
+
 ```
 $ cd arm-cm4-guide/
 $ cat README.md 
@@ -484,14 +485,19 @@ $ tree
 
 2 directories, 9 files
 ```
+
 4. 提交到arm-cm4-guide仓库
+
 ```
 $ git add README.md SUMMARY.md chapter1/ chapter2/
 $ git commit -m "add book content."
 $ git push origin master
+
 ```
+
 ## 3.2. 构建书籍
 首先，使用 gitbook build 将书籍内容输出到默认目录，也就是当前目录下的 _book 目录。
+
 ```
 $ gitbook build
 info: 7 plugins are installed 
