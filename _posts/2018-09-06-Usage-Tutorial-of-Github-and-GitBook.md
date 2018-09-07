@@ -14,34 +14,33 @@ tags:
 
 # 1. GitHub
 ## 1.1. 创建账户
-https://github.com/  在上面注册
-username: aojunhu
+https://github.com/  在上面注册账户: gitexample
 ## 1.2. 生成本地公钥/私钥对
 在本地Ubuntu上，ssh-keygen命令创建公钥/私钥对：
 ```
 $ ssh-keygen
 ```
 然后根据提示在用户主目录下的.ssh目录中创建默认的公钥/私钥对文件，其中~/.ssh/id_rsa是私钥文件，~/.ssh/id_rsa.pub是公钥文件。注意私钥文件要严加保护，不能泄露给任何人。如果在执行ssh-keygen命令时选择了使用口令保护私钥，私钥文件是经过加密的。至于公钥文件~/.ssh/id_rsa.pub则可以放心地公开给他人。
-也可以用ssh-keygen命令以不同的名称创建多个公钥，当拥有多个GitHub账号时，非常重要。这是因为虽然一个GitHub账号允许使用多个不同的SSH公钥，但反过来，一个SSH公钥只能对应于一个GitHub账号。下面的命令在~/.ssh目录下创建名为aojunhu的私钥和名为aojunhu.pub的公钥文件。
+也可以用ssh-keygen命令以不同的名称创建多个公钥，当拥有多个GitHub账号时，非常重要。这是因为虽然一个GitHub账号允许使用多个不同的SSH公钥，但反过来，一个SSH公钥只能对应于一个GitHub账号。下面的命令在~/.ssh目录下创建名为gitexample的私钥和名为gitexample.pub的公钥文件。
 ```
-$ ssh-keygen -C "gotgithub@gmail.com" -f ~/.ssh/aojunhu
+$ ssh-keygen -C "gitexample@gmail.com" -f ~/.ssh/gitexample
 
 $ ls ~/.ssh/
-aojunhu  aojunhu.pub
+gitexample  gitexample.pub
 ```
-当生成的公钥/私钥对不在缺省位置（~/.ssh/id_rsa等）时，使用ssh命令连接远程主机时需要使用参数-i <filename>指定公钥/私钥对。或者在配置文件~/.ssh/config中针对相应主机进行设定。例如对于上例创建了非缺省公钥/私钥对~/.ssh/aojunhu，可以在~/.ssh/config配置文件中写入如下配置。
+当生成的公钥/私钥对不在缺省位置（~/.ssh/id_rsa等）时，使用ssh命令连接远程主机时需要使用参数-i <filename>指定公钥/私钥对。或者在配置文件~/.ssh/config中针对相应主机进行设定。例如对于上例创建了非缺省公钥/私钥对~/.ssh/gitexample，可以在~/.ssh/config配置文件中写入如下配置。
 ```
 Host github.com
     User git 
     Hostname github.com
     PreferredAuthentications publickey
-    IdentityFile ~/.ssh/aojunhu               
+    IdentityFile ~/.ssh/gitexample               
 ```
-好了，有了上面的准备，就将~/.ssh/aojunhu.pub文件内容拷贝到剪切板。然后将公钥文件中的内容粘贴到GitHub的SSH公钥管理的对话框中。
+好了，有了上面的准备，就将~/.ssh/gitexample.pub文件内容拷贝到剪切板。然后将公钥文件中的内容粘贴到GitHub的SSH公钥管理的对话框中。
 设置成功后，再用ssh命令访问GitHub，会显示一条认证成功信息并退出。在认证成功的信息中还会显示该公钥对应的用户名。
 ```
 $ ssh -T git@github.com
-Hi aojunhu! You have successfully authenticated, but GitHub does not provide shell access.
+Hi gitexample! You have successfully authenticated, but GitHub does not provide shell access.
 ```
 
 ## 1.3. 项目托管
@@ -51,7 +50,7 @@ Your repositories --> Create a new repository  --> set Repository name --> Creat
 ### 1.3.2. 版本库初始化
 如果是从头创建版本库，可以采用先克隆，建立提交数据，最后再通过推送完成GitHub版本库的初始化。步骤如下：
 ```
-$ git clone git@github.com:aojunhu/helloworld.git helloworld
+$ git clone git@github.com:gitexample/helloworld.git helloworld
 Cloning into 'helloworld'...
 Warning: Permanently added the RSA host key for IP address '13.250.177.223' to the list of known hosts.
 remote: Counting objects: 3, done.
@@ -95,7 +94,7 @@ $ git commit -m "README for this project."
 ```
 为版本库添加名为origin的远程版本库。
 ```
-$ git remote add origin git@github.com:aojunhu/helloworld.git
+$ git remote add origin git@github.com:gitexample/helloworld.git
 ```
 执行推送命令，完成GitHub版本库的初始化。注意命令行中的-u参数，在推送成功后自动建立本地分支与远程版本库分支的追踪。
 ```
@@ -103,11 +102,12 @@ $ git push -u origin master
 ```
 ## 1.4. 操作版本库
 ### 1.4.1. 强制推送
-上文提交时，提交用户设置的邮件地址并非gotgithub用户设置的邮件地址。补救办法就是对此提交进行修改，然后强制推送到GitHub。
-重新设置user.name和user.email配置变量。
+上文提交时，提交用户设置的邮件地址并非gitexample用户设置的邮件地址。补救办法就是对此提交进行修改，然后强制推送到GitHub。
+重新设置core.editor，user.name和user.email配置变量。
 ```
-$ git config user.name "naiquan.hu"
-$ git config user.email "naiquan_hu@hotmail.com"
+$ git config --global core.editor vim
+$ git config user.name "gitexample"
+$ git config user.email "gitexample@gmail.com"
 ```
 执行Git修补提交命令。
 注意使用参数--reset-author会将提交信息中的属性Author连同AuthorDate一并修改，否则只修改Commit和CommitDate。参数-C HEAD维持提交说明不变。
@@ -118,16 +118,16 @@ $ git commit --amend --reset-author -C HEAD
 ```
 $ git log --pretty=fuller
 commit 959af4fe61bbdc984dcc26acd139ea3e164096f4
-Author:     naiquan.hu <naiquan_hu@hotmail.com>
+Author:     gitexample <gitexample@gmail.com>
 AuthorDate: Tue Sep 4 15:58:25 2018 +0800
-Commit:     naiquan.hu <naiquan_hu@hotmail.com>
+Commit:     gitexample <gitexample@gmail.com>
 CommitDate: Tue Sep 4 15:58:25 2018 +0800
 
     README for this project.
 ```
 使用强制推送。
 ```
-$ git push -f
+$ git push -f origin master
 ```
 ### 1.4.2. 新建分支
 Git的分支就是保存在.git/refs/heads/命名空间下的引用。引用文件的内容是该分支对应的提交ID。当前版本库中的默认分支master就对应于文件.git/refs/heads/master。
@@ -157,7 +157,8 @@ $ git push -u origin mybranch1
 在"Settings"选项卡可以设置Default branch。
 修改了GitHub默认分支后，如果再从GitHub克隆版本库，本地克隆后版本库的默认分支也将改变。
 ```
-$ git clone git@github.com:aojunhu/helloworld.git helloworld-branch1Cloning into 'helloworld-branch1'...
+$ git clone git@github.com:gitexample/helloworld.git helloworld-branch1
+Cloning into 'helloworld-branch1'...
 remote: Counting objects: 6, done.
 remote: Compressing objects: 100% (4/4), done.
 remote: Total 6 (delta 0), reused 6 (delta 0), pack-reused 0
@@ -168,6 +169,7 @@ $ git branch
 ```
 实际上修改GitHub上版本库的默认分支，就是将GitHub版本库的头指针HEAD指向了其他分支，如mybranch1分支。这可以从下面命令看出。
 ```
+$ cd helloworld-branch1/
 $ git branch -r
   origin/HEAD -> origin/mybranch1
   origin/master
@@ -181,6 +183,7 @@ $ git branch -r
 ### 1.4.4. 删除分支
 不能删除当前工作分支。因此先切换到其他分支，例如从GitHub版本库中取出master分支并切换。
 ```
+$ cd helloworld-branch1/
 $ git branch
   master
 * mybranch1
@@ -254,21 +257,21 @@ To git@github.com:gotgithub/helloworld.git
 另外，版本库还可以与一些扩展应用建立联系，比如跟Email 和Redmine整合，Email可以实现新提交推送至版本库时，发送通知邮件。Redmine可以和多种版本库（包括Git）整合，可以直接通过Web界面浏览Git提交，还实现了提交和问题的关联。
 ## 1.5. 建立主页
 ### 1.5.1. 创建个人主页
-GitHub 为每一个用户分配了一个二级域名<user-id>.github.io，用户为自己的二级域名创建主页很容易，只要在托管空间下创建一个名为<user-id>.github.io的版本库，向其master分支提交网站静态页面即可，其中网站首页为index.html。下面以aojunhu用户为例介绍如何创建个人主页。
-1. 用户aojunhu创建一个名为aojunhu.github.io的Git版本库。
+GitHub 为每一个用户分配了一个二级域名<user-id>.github.io，用户为自己的二级域名创建主页很容易，只要在托管空间下创建一个名为<user-id>.github.io的版本库，向其master分支提交网站静态页面即可，其中网站首页为index.html。下面以gitexample用户为例介绍如何创建个人主页。
+1. 用户gitexample创建一个名为gitexample.github.io的Git版本库。
 2. 在本地克隆新建立的版本库。
 ```
-$ git clone git@github.com:aojunhu/aojunhu.github.io.git aojunhu.github.io
-Cloning into 'aojunhu.github.io'...
+$ git clone git@github.com:gitexample/gitexample.github.io.git gitexample.github.io
+Cloning into 'gitexample.github.io'...
 remote: Counting objects: 3, done.
 remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
 Receiving objects: 100% (3/3), done.
 Checking connectivity... done.
-$ cd aojunhu.github.io/
+$ cd gitexample.github.io/
 ```
 3. 在版本库根目录中创建文件index.html作为首页。
 ```
-$ printf "<h1>GotGitHub's HomePage</h1>It works.\n" > index.html
+$ printf "<h1>gitexample's HomePage</h1>It works.\n" > index.html
 ```
 4. 提交
 ```
@@ -279,20 +282,20 @@ $ git commit -m "Homepage test version."
 ```
 $ git push origin master
 ```
-6. 访问网址： [http://aojunhu.github.io/](http://aojunhu.github.io/) 。
+6. 访问网址： [http://gitexample.github.io/](http://gitexample.github.io/) 。
 
 ### 1.5.2. 创建项目主页
 如前所述，GitHub会为每个账号分配一个二级域名<user-id>.github.io作为用户的首页地址。实际上还可以为每个项目设置主页，项目主页也通过此二级域名进行访问。
 
-例如gotgithub用户创建的helloworld项目如果启用了项目主页，则可通过网址http://gotgithub.github.io/helloworld/访问。
+例如gitexample用户创建的helloworld项目如果启用了项目主页，则可通过网址http://gitexample.github.io/helloworld/访问。
 
 为项目启用项目主页很简单，只需要在项目版本库中创建一个名为gh-pages的分支，并向其中添加静态网页即可。也就是说如果项目的Git版本库中包含了名为gh-pages分支的话，则表明该项目提供静态网页构成的主页，可以通过网址http://<user-id>.github.io/<project-name>访问到。
 
-下面以用户aojunhu的项目helloworld为例，介绍如何维护项目主页。
+下面以用户gitexample的项目helloworld为例，介绍如何维护项目主页。
 
 如果本地尚未从GitHub克隆helloworld版本库，执行如下命令。
 ```
-$ git clone git@github.com:aojunhu/helloworld.git
+$ git clone git@github.com:gitexample/helloworld.git
 $ cd helloworld
 ```
 当前版本库只有一个名为master的分支，如果直接从master分支创建gh-pages分支操作非常简单，但是作为保存网页的gh-pages分支中的内容和master分支中的可能完全不同。如果不希望gh-pages分支继承master分支的历史和文件，即想要创建一个干净的gh-pages分支，需要一点小技巧。
@@ -324,7 +327,7 @@ $ git reset --hard $(echo "branch gh-pages init." | git commit-tree $(git write-
 ```
 $ git push -u origin gh-pages
 ```
-稍后，用浏览器访问下面的地址即可看到刚刚提交的项目首页： [http://aojunhu.github.io/helloworld/](http://aojunhu.github.io/helloworld/) 。
+稍后，用浏览器访问下面的地址即可看到刚刚提交的项目首页： [http://gitexample.github.io/helloworld/](http://gitexample.github.io/helloworld/) 。
 当然，还有其他创建方法，详见：[GotGitHub](http://www.worldhello.net/gotgithub/03-project-hosting/050-homepage.html)
 
 # 2. GitBook
@@ -367,14 +370,12 @@ book/
 README.md 和 SUMMARY.md 是两个必须文件，README.md 是对书籍的简单介绍：
 ```
 $ cat book/README.md 
-# README
 
 This is a book powered by [GitBook](https://github.com/GitbookIO/gitbook).
 ```
 SUMMARY.md 是书籍的目录结构。内容如下：
 ```
 $ cat book/SUMMARY.md 
-# SUMMARY
 
 * [Chapter1](chapter1/README.md)
   * [Section1.1](chapter1/section1.1.md)
@@ -432,7 +433,7 @@ Serving book on http://localhost:4000
 1. github上创建仓库arm-cm4-guide
 2. checkout arm-cm4-guide到本地
 ```
-$ git clone git@github.com:aojunhu/arm-cm4-guide.git arm-cm4-guide
+$ git clone git@github.com:gitexample/arm-cm4-guide.git arm-cm4-guide
 ```
 3. 编写书籍内容
 
@@ -541,7 +542,8 @@ $ git commit -m "Publish book"
 ```
 $ git push -u origin gh-pages
 ```
-访问 https://aojunhu.github.io/arm-cm4-guide/ 就可以阅读 arm-cm4-guide这本书了！
+访问 https://gitexample.github.io/arm-cm4-guide/ 就可以阅读 arm-cm4-guide这本书了！
 
 # 4. 利用 GitHub Pages 快速搭建个人博客
 fork别人的模板（qiubaiying.github.io），rename为自己的仓库名(<user-id>.github.io)。
+把里面的页面内容修改为自己的即可。
