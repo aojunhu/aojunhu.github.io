@@ -1,10 +1,10 @@
 # Site settings
 title: Naiquan.hu's Blog
-SEOTitle: 胡乃全的博客 | BY Blog
+SEOTitle: 胡乃全的博客
 header-img: img/post-bg-desk.jpg
 email: hunaiquan@126.com
 description: "Every failure is leading towards success."
-keyword: "BY, BY Blog, 胡乃全的博客, naiquanhu, WiFi, 802.11, ARM Cortex-M, SoC, Linux Driver, Android"
+keyword: "胡乃全的博客, naiquanhu, WiFi, 802.11, ARM Cortex-M, SoC, Linux Driver, Android"
 url: "http://aojunhu.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/aojunhu/aojunhu.github.io.git" # you code repository
