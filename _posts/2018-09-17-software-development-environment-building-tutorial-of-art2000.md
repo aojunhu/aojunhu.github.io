@@ -2,7 +2,7 @@
 layout:     post
 title:      Linux下ARM软件开发环境构建教程
 subtitle:   Linux下ARM软件开发环境构建
-date:       2018-09-017
+date:       2018-09-17
 author:     naiquan.hu
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
