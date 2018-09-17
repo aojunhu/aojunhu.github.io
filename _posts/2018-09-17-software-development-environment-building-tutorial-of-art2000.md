@@ -142,6 +142,8 @@ J-Link可执行文件安装在 /usr/bin。
 **测试：**
 1. 通过JLink连接PC到开发板。
 2. 执行命令：
+
+
 ```
 $ JLinkExe
 SEGGER J-Link Commander V6.34 (Compiled Aug  7 2018 15:59:20)
@@ -191,6 +193,7 @@ ROMTbl[0][4]: E0040000, CID: B105900D, PID: 000BB9A1 TPIU
 Cortex-M4 identified.
 
 ```
+
 连接成功！
 # 6. 安装OpenOCD
 OpenOCD download URL: 
@@ -200,6 +203,7 @@ https://github.com/gnu-mcu-eclipse/openocd/releases/download/v0.10.0-8-20180512/
 下载文件：gnu-mcu-eclipse-openocd-0.10.0-8-20180512-1921-centos64.tgz。
 
 解压：
+
 ```
 $ tar -zxvf gnu-mcu-eclipse-openocd-0.10.0-8-20180512-1921-centos64.tgz -C ~/opt/
 
@@ -207,7 +211,9 @@ $ sudo cp ~/opt/gnu-mcu-eclipse/openocd/0.10.0-8-20180512-1921/contrib/60-openoc
 $ sudo udevadm control --reload-rules
 
 $ sudo usermod -aG plugdev $USER
+
 ```
+
 
 + 更新OpenOCD路径
 
@@ -223,12 +229,16 @@ QEMU download URL:
 https://github.com/gnu-mcu-eclipse/qemu/releases/download/v2.8.0-3-20180523/gnu-mcu-eclipse-qemu-2.8.0-3-20180523-0703-centos64.tgz
 
 下载文件：gnu-mcu-eclipse-qemu-2.8.0-3-20180523-0703-centos64.tgz
+
+
 ```
 $ tar -zxvf gnu-mcu-eclipse-qemu-2.8.0-3-20180523-0703-centos64.tgz -C ~/opt/
 $ ~/opt/gnu-mcu-eclipse/qemu/2.8.0-3-20180523-0703/bin/qemu-system-gnuarmeclipse --version
 GNU MCU Eclipse 64-bits QEMU emulator version 2.8.0-3 (v2.8.0-3-20180523-dirty)
 Copyright (c) 2003-2016 Fabrice Bellard and the QEMU Project developers
+
 ```
+
 + 更新QEMU路径
 
 在Eclipse主菜单中： Window --> Preferences --> MCU --> Global QEMU Path
@@ -247,13 +257,21 @@ https://vlab.jumper.io/login
 + 安装Jumper Virtual Lab
 
 如果是python2.7，如下命令：
+
 ```
+
 $ sudo pip install jumper --upgrade
+
 ```
+
 如果是Python3.4，如下命令：
+
 ```
+
 $ sudo pip3 install jumper --upgrade
+
 ```
+
 # 9. 安装工作区偏好设置
 ## 9.1. 自动保存和文本文件编码
 如果编辑了代码忘记了保存，编译运行后是没有任何变化的，所以最好设置自动保存。
