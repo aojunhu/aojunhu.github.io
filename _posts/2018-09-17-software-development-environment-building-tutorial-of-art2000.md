@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      Linux下ARM软件开发环境构建教程
-subtitle:   Linux下ARM软件开发环境构建
+title:      Linux下利用Eclipse C/C++搭建嵌入式ARM开发环境
+subtitle:   Linux下利用Eclipse C/C++搭建嵌入式ARM开发环境
 date:       2018-09-17
 author:     naiquan.hu
 header-img: img/post-bg-ios9-web.jpg
@@ -12,12 +12,10 @@ tags:
     - eclipse
 ---
 
----
-[TOC]
----
+
 # 1. 系统准备
 # 1.1 OS
-操心系统：ubuntu-16.04.2-desktop-amd64。
+操心系统：ubuntu-16.04.2-desktop-amd64 或ubuntu-14.04.x-desktop-amd64
 
 # 1.2 安装pip
 ```
@@ -27,7 +25,8 @@ $ sudo apt install python-pip
 ```
 $ sudo pip install --upgrade pip
 ```
-# 1.3 多个版本Python的处理
+# 1.3 安装Python及多个版本的使用
+**此步骤为可选**
 安装2.7和3.4两个版本：
 ```
 sudo apt-get install python2.7
@@ -79,15 +78,100 @@ export JRE_HOME=${JAVA_HOME}/jre
 export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib 
 export PATH=${JAVA_HOME}/bin:$PATH
 ```
-# 3. 安装eclipse
-# 3.1. 安装eclipse
+
+# 3. 安装Toolchain
+
+Download URL:
+
+https://github.com/gnu-mcu-eclipse/arm-none-eabi-gcc/releases/download/v7.3.1-1.1/gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz
+
+下载最新版：gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz
+```
+mkdir ~/opt
+$ tar -zxvf gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz -C ~/opt/
+```
+
+注意：**不需要将工具链路径添加到用户或系统路径！**
+
+如果现有一个工具链只有一个单一版本，那么这不会有问题，但如果有相同工具链的多个版本 ，将会出现问题。所以不设置工具链路径，由GNU MCU Eclipse插件管理工具链。
+
+# 4. 安装SEGGER J-Link
+J-Link download URL: https://www.segger.com/downloads/jlink/
+
+下载该**特定版本**：JLink_Linux_V612e_x86_64.tgz。
+**注意： 不可下载最新版！**
+
+**安装：**
+```
+$ sudo mkdir /opt/SEGGER
+$ sudo tar -zxvf JLink_Linux_V612e_x86_64.tgz -C /opt/SEGGER/
+$ sudo cp /opt/SEGGER/JLink_Linux_V612e_x86_64/99-jlink.rules /etc/udev/rules.d/
+
+$ vi ~/.bashrc
+
+export JLINK_HOME=/opt/SEGGER/JLink_Linux_V612e_x86_64
+export PATH=${PATH}:${JAVA_HOME}/bin:${JLINK_HOME}
+```
+
+
+**测试：**
+1. 通过JLink连接PC到开发板。
+2. 执行命令：
+
+
+```
+$ JLinkExe
+SEGGER J-Link Commander V6.12e (Compiled Jan  6 2017 17:21:59)
+DLL version V6.12e, compiled Jan  6 2017 17:21:51
+
+Connecting to J-Link via USB...O.K.
+Firmware: J-Link V9 compiled Apr 20 2018 16:47:26
+Hardware version: V9.20
+S/N: -1
+License(s): RDI, GDB, FlashDL, FlashBP, JFlash, RDDI
+VTref = 3.293V
+
+
+Type "connect" to establish a target connection, '?' for help
+J-Link>connect
+Please specify device / core. <Default>: UNSPEC
+Type '?' for selection dialog
+Device>CORTEX-M4
+Please specify target interface:
+  J) JTAG (Default)
+  S) SWD
+TIF>S
+Specify target interface speed [kHz]. <Default>: 4000 kHz
+Speed>
+Device "CORTEX-M4" selected.
+
+
+Found SWD-DP with ID 0x2BA01477
+AP-IDR: 0x24770011, Type: AHB-AP
+AHB-AP ROM: 0xE00FF000 (Base addr. of first ROM table)
+Found Cortex-M4 r0p1, Little endian.
+FPUnit: 6 code (BP) slots and 2 literal slots
+CoreSight components:
+ROMTbl 0 @ E00FF000
+ROMTbl 0 [0]: FFF0F000, CID: B105E00D, PID: 000BB00C SCS
+ROMTbl 0 [1]: FFF02000, CID: B105E00D, PID: 003BB002 DWT
+ROMTbl 0 [2]: FFF03000, CID: B105E00D, PID: 002BB003 FPB
+ROMTbl 0 [3]: FFF01000, CID: B105E00D, PID: 003BB001 ITM
+ROMTbl 0 [4]: FFF41000, CID: B105900D, PID: 000BB9A1 TPIU
+Cortex-M4 identified.
+
+```
+
+连接成功！
+
+# 5. eclipse安装及配置
+# 5.1. 安装eclipse
 最简单的方法是从GNU MCU Eclipse GitHub Release下载，可以同时获得Eclipse CDT和MCU所需的插件。
 
 [gnumcueclipse-4.4.1 下载](https://github.com/gnu-mcu-eclipse/org.eclipse.epp.packages/releases/download/v4.4.1-20180721-o3a/20180721-1240-gnumcueclipse-4.4.1-oxygen-3a-linux.gtk.x86_64.tar.gz)
 
 下载的压缩包为20180721-1240-gnumcueclipse-4.4.1-oxygen-3a-linux.gtk.x86_64.tar.gz。
 ```
-mkdir ~/opt
 tar zxvf 20180721-1240-gnumcueclipse-4.4.1-oxygen-3a-linux.gtk.x86_64.tar.gz -C ~/opt/
 $ sudo vi /usr/share/applications/eclipse.desktop
 
@@ -106,96 +190,136 @@ $ sudo chmod u+x /usr/share/applications/eclipse.desktop
 $ ln -sf $JRE_HOME ~/opt/eclipse/jre
 ```
 than, launch eclipse.
-# 3.2. 安装CDT Main Features ======
-+ **Eclipse menu --> Help --> Install New Software... -->**
-+ **Work with:** select  CDT - http://download.eclipse.org/tools/cdt/releases/9.4
-+ select **CDT Main Features** and install.
 
-# 4. 安装Toolchain
+# 5.2. 配置Toolchain和J-Link路径
++ **Eclipse menu --> Window  --> Preferences**
 
-Download URL:
++ **MCU --> Global ARM Toolchains Paths**
+   Default toolchain: GNU MCU Eclipse ARM Embedded GCC
+   Toolchain name:  GNU MCU Eclipse ARM Embedded GCC
+   Toolchain folder:  /home/username/opt/gnu-mcu-eclipse/arm-none-eabi-gcc/7.3.1-1.1-20180724-0637/bin
 
-https://github.com/gnu-mcu-eclipse/arm-none-eabi-gcc/releases/download/v7.3.1-1.1/gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz
++ **MCU --> Global SEGGER J-Link Path**
+	Executable:  JLinkGDBServer
+	Folder:    /opt/SEGGER/JLink_Linux_V612e_x86_64
+	
++ **MCU --> Workspace ARM Toolchains Paths**
+   Default toolchain: GNU MCU Eclipse ARM Embedded GCC
+   Toolchain name:  GNU MCU Eclipse ARM Embedded GCC
+   Toolchain folder:  /home/username/opt/gnu-mcu-eclipse/arm-none-eabi-gcc/7.3.1-1.1-20180724-0637/bin
 
-下载最新版：gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz
-```
-$ tar -zxvf gnu-mcu-eclipse-arm-none-eabi-gcc-7.3.1-1.1-20180724-0637-centos64.tgz -C ~/opt/
-```
++ **MCU --> Workspace SEGGER J-Link Path**
+	Executable:  JLinkGDBServer
+	Folder:    /opt/SEGGER/JLink_Linux_V612e_x86_64
 
-注意：**不要将工具链路径添加到用户或系统路径！**
-
-如果现有一个工具链只有一个单一版本，那么这不会有问题，但如果有相同工具链的多个版本 ，将会出现问题。所以不设置工具链路径，由GNU MCU Eclipse插件管理工具链。
-
-# 5. 安装SEGGER J-Link
-J-Link download URL: https://www.segger.com/downloads/jlink/
-
-下载最新版：JLink_Linux_V634_x86_64.deb。
-
-**安装：**
-```
-$ sudo dpkg -i JLink_Linux_V634_x86_64.deb
-```
-J-Link可执行文件安装在 /usr/bin。
-
-安装过程会自动添加/etc/udev/rules.d/99-jlink.rules以定义J-Link设备的USB ID。 
-
-**测试：**
-1. 通过JLink连接PC到开发板。
-2. 执行命令：
++ **Apply and Close**
 
 
-```
-$ JLinkExe
-SEGGER J-Link Commander V6.34 (Compiled Aug  7 2018 15:59:20)
-DLL version V6.34, compiled Aug  7 2018 15:58:52
 
-Connecting to J-Link via USB...O.K.
-Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
-Hardware version: V7.00
-S/N: 20090928
-License(s): RDI,FlashDL,FlashBP,JFlash,GDBFull
-VTref=3.300V
+# 6. 安装工作区偏好设置
+## 6.1. 自动保存和文本文件编码
+如果编辑了代码忘记了保存，编译运行后是没有任何变化的，所以最好设置自动保存。
++ go to the Eclipse **menu → (Windows →) Preferences → General → Workspace**
++ enable **Save automatically before build**
+
+在同个页面，设置文本编码和行分隔符：
++ in the **Text file encoding** section
++ click the **Other** button
++ select **UTF-8** in the combo box
++ check the **New text file line delimiter** to be set to Unix
++ disable the **Build automatically** option
++ last, click the **Apply** button
+
+## 6.2. 显示行号
++ go to the **Eclipse menu → (Window →) Preferences → General → Editors → Text Editors**
++ enable **Show line numbers**
++ enable **Show print margin**
++ set the **Print margin column** at 80
++ click the **Apply** button
+
+## 6.3. 使用活动构建配置进行索引
+Eclipse CDT有一个非常强大的索引器，它可以动态解析源代码，并在编辑时提供提示，自动完成帮助，错误报告等，而无需启动构建过程。要使索引器在从一个配置更改为另一个配置时自动同步，请检查索引器是否设置为使用活动配置：
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Indexer**
++ enable **Use active build configuration**
++ click the **Apply** button
+
+## 6.4. 编辑器折叠
+为了更好地查看源文件的整个内容，建议禁用编辑器折叠：
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Editor → Folding**
++ disable **Header Comments** (in fact it is recommended to disable all foldings)
++ click the **Apply** button
+
+## 6.5. 代码格式
+Eclipse CDT具有非常有用的功能，允许自动重新格式化一段代码以符合给定的样式。 推荐的样式是GNU：
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Code Style → Formatter**
++ in the **Active profile**: field, select **GNU [built-in]**
++ click the **Edit…** button
++ set **Profile name** to GNU with spaces
++ Change the tab policy to **Spaces only**, and the **indentation** and **tab size** to 2
+
+## 6.6. 编译控制台
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Build → Console**
++ enable **Wrap lines on the console**
++ enable **Bring console to top when building**
++ increase the **Limit console output:** field, for example from 500 to 5000 lines
++ click the **Apply** button
+## 6.7. Doxygen
+To enable support for documentation tool comments:
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Editor**
++ select **Doxygen** in the Documentation tool comments
+这样，你只需输入/\**，剩余的注释会自动补齐。
+
+## 6.8. 调试前面应用
+Eclipse会记住以前使用的调试配置，并可将其作为主调试按钮的默认配置。
++ go to the **Eclipse menu → (Window →) Preferences → Run/Debug → Launching**
++ select **Always launch the previously launched application** in the **Launch Operation** section.
+
+## 6.9. Show source roots
+对于具有许多源文件夹的大型项目，您可能希望禁用显示源文件夹：
++ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Appearance**
++ disable **Show source roots at top of project**.
 
 
-Type "connect" to establish a target connection, '?' for help
-J-Link>connect
-Please specify device / core. <Default>: CORTEX-M4
-Type '?' for selection dialog
-Device>
-Please specify target interface:
-  J) JTAG (Default)
-  S) SWD
-  T) cJTAG
-TIF>S
-Specify target interface speed [kHz]. <Default>: 4000 kHz
-Speed>10
-Device "CORTEX-M4" selected.
+# 7. Create a Hello ARM test project
+
+# 7.1 Create and Build
+
++ go to Eclipse menu, **File** --> **New**, and select the **C Project**
++ In the **C Project** window, set Project name = hello, Project type = Executable --> **Hello World ARM Cortex-M C/C++ Project**
++ Toolchains: Cross ARM GCC
++ click the **Next->** button
+![](\images\project-manager\project-manager-0000.png)
+
+In the **Target processor settings**:
+![](\images\project-manager\project-manager-0001.png)
+
+In the **Folders**:
+![](\images\project-manager\project-manager-0002.png)
+
+In the **Select Configurations**:
+![](\images\project-manager\project-manager-0003.png)
+
+In the **GNU ARM Cross Toolchain**:
+![](\images\project-manager\project-manager-0004.png)
+
++ click the **Finish** button.
++ Modify as the following and build the hello project.
+![](\images\project-manager\project-manager-0005.png)
 
 
-Connecting to target via SWD
-Found SW-DP with ID 0x2BA01477
-Scanning AP map to find all available APs
-AP[1]: Stopped AP scan as end of AP map has been reached
-AP[0]: AHB-AP (IDR: 0x24770011)
-Iterating through AP map to find AHB-AP to use
-AP[0]: Core found
-AP[0]: AHB-AP ROM base: 0xE00FF000
-CPUID register: 0x410FC241. Implementer code: 0x41 (ARM)
-Found Cortex-M4 r0p1, Little endian.
-FPUnit: 6 code (BP) slots and 2 literal slots
-CoreSight components:
-ROMTbl[0] @ E00FF000
-ROMTbl[0][0]: E000E000, CID: B105E00D, PID: 000BB00C SCS-M7
-ROMTbl[0][1]: E0001000, CID: B105E00D, PID: 003BB002 DWT
-ROMTbl[0][2]: E0002000, CID: B105E00D, PID: 002BB003 FPB
-ROMTbl[0][3]: E0000000, CID: B105E00D, PID: 003BB001 ITM
-ROMTbl[0][4]: E0040000, CID: B105900D, PID: 000BB9A1 TPIU
-Cortex-M4 identified.
+# 7.2 Debug
 
-```
++ go to Eclipse menu, **Run --> Debug Configurations... **
++ Double click **GDB SEGGER J-Link Debugging** and config as following:
+![](\images\project-manager\project-manager-0006.png)
+![](\images\project-manager\project-manager-0007.png)
+![](\images\project-manager\project-manager-0008.png)
++ click the **Debug** button
+![](\images\project-manager\project-manager-0009.png)
+![](\images\project-manager\project-manager-0010.png)
 
-连接成功！
-# 6. 安装OpenOCD
+# 8. 安装OpenOCD
+
 OpenOCD download URL: 
 
 https://github.com/gnu-mcu-eclipse/openocd/releases/download/v0.10.0-8-20180512/gnu-mcu-eclipse-openocd-0.10.0-8-20180512-1921-centos64.tgz
@@ -223,7 +347,7 @@ Executable: openocd
 
 Folder:   ~/opt/gnu-mcu-eclipse/openocd/0.10.0-8-20180512-1921/bin
 
-# 7. 安装QEMU
+# 9. 安装QEMU
 QEMU download URL: 
 
 https://github.com/gnu-mcu-eclipse/qemu/releases/download/v2.8.0-3-20180523/gnu-mcu-eclipse-qemu-2.8.0-3-20180523-0703-centos64.tgz
@@ -247,7 +371,7 @@ Executable: qemu-system-gnuarmeclipse
 
 Folder:   ~/opt/gnu-mcu-eclipse/qemu/2.8.0-3-20180523-0703/bin
 
-# 8. 安装Jumper Virtual Lab
+# 10. 安装Jumper Virtual Lab
 Jumper Virtual lab是一个模拟器，它提供了一种快速简便的方法来运行固件文件。 Jumper的eclipse插件与GNU MCU Eclipse的插件配合使用，使您可以轻松地在虚拟设备上运行固件。
 
 + 创建一个账户
@@ -272,69 +396,3 @@ $ sudo pip3 install jumper --upgrade
 
 ```
 
-# 9. 安装工作区偏好设置
-## 9.1. 自动保存和文本文件编码
-如果编辑了代码忘记了保存，编译运行后是没有任何变化的，所以最好设置自动保存。
-+ go to the Eclipse **menu → (Windows →) Preferences → General → Workspace**
-+ enable **Save automatically before build**
-
-在同个页面，设置文本编码和行分隔符：
-+ in the **Text file encoding** section
-+ click the **Other** button
-+ select **UTF-8** in the combo box
-+ check the **New text file line delimiter** to be set to Unix
-+ disable the **Build automatically** option
-+ last, click the **Apply** button
-
-## 9.2. 显示行号
-+ go to the **Eclipse menu → (Window →) Preferences → General → Editors → Text Editors**
-+ enable **Show line numbers**
-+ enable **Show print margin**
-+ set the **Print margin column** at 80
-+ click the **Apply** button
-
-## 9.3. 使用活动构建配置进行索引
-Eclipse CDT有一个非常强大的索引器，它可以动态解析源代码，并在编辑时提供提示，自动完成帮助，错误报告等，而无需启动构建过程。要使索引器在从一个配置更改为另一个配置时自动同步，请检查索引器是否设置为使用活动配置：
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Indexer**
-+ enable **Use active build configuration**
-+ click the **Apply** button
-
-## 9.4. 编辑器折叠
-为了更好地查看源文件的整个内容，建议禁用编辑器折叠：
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Editor → Folding**
-+ disable **Header Comments** (in fact it is recommended to disable all foldings)
-+ click the **Apply** button
-
-## 9.5. 代码格式
-Eclipse CDT具有非常有用的功能，允许自动重新格式化一段代码以符合给定的样式。 推荐的样式是GNU：
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Code Style → Formatter**
-+ in the **Active profile**: field, select **GNU [built-in]**
-+ click the **Edit…** button
-+ set **Profile name** to GNU with spaces
-+ Change the tab policy to **Spaces only**, and the **indentation** and **tab size** to 2
-
-## 9.6. 编译控制台
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Build → Console**
-+ enable **Wrap lines on the console**
-+ enable **Bring console to top when building**
-+ increase the **Limit console output:** field, for example from 500 to 5000 lines
-+ click the **Apply** button
-## 9.7. Doxygen
-To enable support for documentation tool comments:
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Editor**
-+ select **Doxygen** in the Documentation tool comments
-这样，你只需输入/\**，剩余的注释会自动补齐。
-
-## 9.8. 调试前面应用
-Eclipse会记住以前使用的调试配置，并可将其作为主调试按钮的默认配置。
-+ go to the **Eclipse menu → (Window →) Preferences → Run/Debug → Launching**
-+ select **Always launch the previously launched application** in the **Launch Operation** section.
-
-## 9.9. Show source roots
-对于具有许多源文件夹的大型项目，您可能希望禁用显示源文件夹：
-+ go to the **Eclipse menu → (Window →) Preferences → C/C++ → Appearance**
-+ disable **Show source roots at top of project**.
-
-
-# 10. 工具链路径管理
-GNU MCU Eclipse交叉编译插件提供了大量现有工具链，并将每个工具链与一个单独的路径相关联。 对于需要特定版本的特殊项目，它还允许将路径关联到每个项目。 在所有情况下，此关联都存储在工作区内部文件夹中，而不是存储在项目配置中，因此它不会通过存储库从一个开发人员传递到另一个开发人员。
