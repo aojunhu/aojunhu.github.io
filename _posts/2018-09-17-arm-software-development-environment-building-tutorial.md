@@ -263,7 +263,9 @@ Eclipse CDT具有非常有用的功能，允许自动重新格式化一段代码
 + enable **Bring console to top when building**
 + increase the **Limit console output:** field, for example from 500 to 5000 lines
 + click the **Apply** button
+
 ## 6.7. Doxygen
+
 To enable support for documentation tool comments:
 + go to the **Eclipse menu → (Window →) Preferences → C/C++ → Editor**
 + select **Doxygen** in the Documentation tool comments
