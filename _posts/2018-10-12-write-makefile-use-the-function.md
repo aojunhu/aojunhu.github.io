@@ -344,3 +344,19 @@ err: ; $(ERR)
 $(warning <text ...>;)
 ```
 这个函数很像error函数，只是它并不会让make退出，只是输出一段警告信息，而make继续执行。
+
+# 10. eval函数
+函数原型：
+```
+$(eval text)
+```
+功能： text 的内容将作为makefile的一部分而被make解析和执行
+例如：
+```
+define MA
+aa:aa.c
+ gcc  -g -o aa aa.c
+endef 
+
+$(eval $(call MA) )
+```
