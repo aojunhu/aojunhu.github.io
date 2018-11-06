@@ -71,3 +71,9 @@ www.godaddy.com
 + username: hxxn
 + pswd: Nxxx1
 + support pin: 3821
+firstdecors.com
+
+# vultr
+https://www.vultr.com/
+email: hxxn@126.com
+pwd:Nxxxx1
