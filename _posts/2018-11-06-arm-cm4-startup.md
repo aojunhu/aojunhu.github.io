@@ -27,7 +27,6 @@ ARM的启动过程通常包括以下部分：
 # 2. 根据BOOT MODE进入不同的启动入口
 BOOT MODE是由PCB设计决定的，根据BOOT0和BOOT1引脚的电压高低决定进入哪种模式：
 ![](/images/blog/00002.png)
-
 ![](/images/blog/00003.png)
 
 # 3. 向量表定义
@@ -113,3 +112,168 @@ Reset_Handler   PROC
 ![](/images/blog/00008.png)
 ![](/images/blog/00009.png)
 ![](/images/blog/00010.png)
+
+
+# 4. ARM系统启动过程
+# 4.1. 地址划分
+boot_memory_base.h
+```
+#ifndef BOOT_MEMORY_BASE_H
+#define BOOT_MEMORY_BASE_H
+#define BOOT_ROM_BASE               0x00000000
+#define BOOT_ROM_LIMIT              0x1000
+#define ROM_CODE_LIMIT              0x10000                 //64K
+#define BOOT_ROM_DATABASE           0x20010000          // 8K
+#define BOOT_ROM_DATALIMIT      0x2000
+#define BOOT_HEADER_SIZE            24                          //refer to boot_type.h
+#define BOOT_RAM_CODEBASE           0x20012000          // 4K
+#define BOOT_RAM_DATABASE           0x20013000          // 4K
+#define UART_DOWNLOAD_CODEBASE  0x20012000
+#define UART_DOWNLOAD_DATABASE  0x20013000
+#define RAM_BASE                                0x1fff0000
+#define RAM_TOP                               0x20032000
+#define FLASH_CACHE_BASE                0x10000000
+#define FLASH_IMAGE_OFFSET          0x3000
+#define RETENTION_MEM_BASE          0x20028000
+#define RETENTION_MEM_SIZE          0x2000
+#define CACHE_MEM_BASE                  0x2002A000
+#define CACHE_MEM_SIZE                  0x8000
+#endif
+```
+![](/images/blog/00011.png)
+## 4.2. Level-1 Boot
+第一阶段BootLoader在ROM中，ROM起始地址放中断向量表，往后依次放入代码段和数据段，总大小为12KB，其中，数据段的执行域在RAM中。如图橙色部分。
+```
+typedef struct{
+    uint32_t art_flag; 
+    uint8_t *target_address;
+    uint16_t ram_header_length;
+    uint16_t length;
+    uint32_t bootram_crc;
+    entry_point_t entry_point;
+    uint32_t crp_value;
+}boot_header_t;
+int main()
+{
+    uint32_t crp_flag;
+    flash_init();
+    flash_read(CRP_FLASH_OFFSET,sizeof(uint32_t),(uint8_t *)(&crp_flag));       // first 4 bytes is crp flag
+    if(crp_flag != CRP_VALID_FLAG)
+    {
+        // function io set for swd
+        sysc_cmp_gpioa_en_2_setf(0);           
+        sysc_cmp_gpioa_en_3_setf(0);
+        #ifdef BOOT_ROM_DEBUG
+        LOG(LOG_LVL_INFO,"crp_invalid SWD out\n");
+        #endif
+    }
+    #ifdef BOOT_ROM_DEBUG
+    LOG(LOG_LVL_INFO,"enter main......\n");
+    #endif
+   
+    boot_stat.rx_done= false;
+    boot_mode.boot_source = (boot_option_t)sysc_awo_i_boot_mode_getf();
+   
+    #ifdef FPGA_SET_BOOTMODE
+    boot_mode.boot_source = BOOT_FROM_FLASH;
+    #endif
+   
+    boot_mode_set(boot_mode.boot_source);
+    while(1)
+    {
+        boot_header_rx_start();
+        while(boot_stat.rx_done==false);
+        if(boot_stat.crc_valid == true)
+            break;
+        else
+            boot_stat.rx_done = false;
+    }
+    boot_header.entry_point();
+    return 1;
+}
+```
+![](/images/blog/00012.png)
+## 4.3. Level-2 Boot
+二级BootLoader从UART或者flash加载到RAM中运行，所以它的加载域和执行域是RAM中的相同位置。因此，MDK project的链接文件如下：
+```
+#! armcc -E
+#include "..\boot_memory_base.h"
+LOAD_BOOTRAM BOOT_RAM_CODEBASE - BOOT_HEADER_SIZE  {    ; load region size_region
+  BOOT_RAM_EXEC +0  {  ; load address = execution address
+        *(boot_header_area,+First)  ;
+        *(+RO,+RW,+ZI)
+  }
+}
+```
+![](/images/blog/00013.png)
+开始的24 bytes存放的是如下内容：
+```
+const boot_info_t boot_info BOOT_HEADER_ATTRIBUTE = {
+    .boot_header = {
+        .art_flag = FLASH_VALID_FLAG,
+        .target_address = (uint8_t *)BOOT_RAM_CODEBASE,
+        .ram_header_length = sizeof(boot_info_t)-sizeof(boot_header_t),
+        .length = 0xffff,
+        .bootram_crc = TO_BE_FILLED,
+        .entry_point = boot_ram_entry,
+        .crp_value = crp_flag,
+    },
+    .sys_nvds_offset = 0x1000,
+    .sys_nvds_len = 0x1000,
+    .sys_nvds_backup = 1,
+    .rfu1 = TO_BE_FILLED,
+    .rfu2 = TO_BE_FILLED,
+};
+```
+Image 的Image Entry point : boot_ram_entry
+Flash开始的12KB存放二级boot的image文件
+![](/images/blog/00014.png)
+二级boot生成的image文件格式如下：
+![](/images/blog/00015.png)
+其中，boot_info_t的长度为0x28。该image文件还需做一下格式转换。
+1. 获取img文件总长度lSize。
+2. Seek到offset为10处，并写入lSize，其实是设置boot_header_t中的length:
+```
+    .boot_header = {
+        .art_flag = FLASH_VALID_FLAG,
+        .target_address = (uint8_t *)BOOT_RAM_CODEBASE,
+        .ram_header_length = sizeof(boot_info_t)-sizeof(boot_header_t),
+        .length = 0xffff,
+        .bootram_crc = TO_BE_FILLED,
+        .entry_point = boot_ram_entry,
+        .crp_value = crp_flag,
+    },
+```
+
+3. 分配buffer，大小为image_size – sizeof(boot_info_t).
+4. 从OFFSET为0x28处开始读取整个image内容到buffer中。
+5. 计算CRC值。
+6. 把CRC值写入boot_header_t中：
+```
+    .boot_header = {
+        .art_flag = FLASH_VALID_FLAG,
+        .target_address = (uint8_t *)BOOT_RAM_CODEBASE,
+        .ram_header_length = sizeof(boot_info_t)-sizeof(boot_header_t),
+        .length = 0xffff,
+        .bootram_crc = TO_BE_FILLED,
+        .entry_point = boot_ram_entry,
+        .crp_value = crp_flag,
+    },
+```
+至此，生成了修改以后的boot_ram.bin。该image会在后面生成flash image时，放入flash的0x0-0x1000的位置。
+一级boot的最后，会引导进入boot_ram_entry()函数。下面来看看该函数的流程。
+![](/images/blog/00016.png)
+在调用Reset_Handler函数时，会传递参数进去，所以Reset_Handler函数中要用R4寄存器。
+![](/images/blog/00017.png)
+```
+Reset_Handler   PROC
+                EXPORT  Reset_Handler             [WEAK]
+                IMPORT  SystemInit
+                IMPORT  __main
+                LDR     R4, =SystemInit
+                BLX     R4
+                LDR     R4, =__main
+                BX      R4
+                ENDP
+```
+至此，已经引导进入user main函数。
