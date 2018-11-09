@@ -51,3 +51,41 @@ if __name__ == "__main__":
     for f in _fs:
         replace(f, "gmacro.h", "wifi_config.h") 
 ```
+
+# Linux下批量把Dos格式的文件转换为UNIX格式
+```
+#!/bin/sh
+
+showUsage()
+{
+    echo "Usage: dos2unixdir [destdir]"
+    exit 0
+}
+
+dir=$PWD
+
+if [ $# -gt 1 ] 
+then
+    showUsage
+fi
+
+if [ $# -gt 0 ] 
+then
+    dir=$1
+fi
+
+echo $dir
+for i in `find $dir`
+do
+    if [ ! -d $i ]
+    then
+        echo "processing file..." $i
+        dos2unix $i $i
+    fi  
+done           
+```
+# linux 批量设置文件夹755 文件644权限
+```
+find -type d|xargs chmod 755
+find -type f|xargs chmod 644
+```
