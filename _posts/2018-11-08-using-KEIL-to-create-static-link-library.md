@@ -17,10 +17,9 @@ tags:
 
 # 2. 如何在KEIL 中生成静态链接库.lib 文件
 + 准备生成的静态链接库的源文件：
+
 ```
-/*
- * file: calc.h
- */
+//file: calc.h
 #ifndef __CALC_H__
 #define __CALC_H__
 
@@ -31,10 +30,8 @@ int mul(int a, int b);
 
 #endif
 
-/*
- * file: calc.c
- */
- #include <stdio.h>
+//file: calc.c
+#include <stdio.h>
 #include "calc.h"
 #include "utils/debug/art_assert.h"
 #include "utils/debug/log.h"
@@ -58,6 +55,7 @@ int mul(int a, int b)
 	return (a * b);
 }
 ```
+
 + 打开KEIL ，创建项目，添加源文件 calc.h, calc.c
 ![](/images/blog/00019.png)
 
