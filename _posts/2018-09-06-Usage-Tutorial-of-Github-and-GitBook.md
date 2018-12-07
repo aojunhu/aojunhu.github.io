@@ -35,6 +35,14 @@ Host github.com
     Hostname github.com
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/gitexample               
+
+#GitLab example
+Host 192.168.200.215
+    User yourname
+    Hostname 192.168.200.215
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/your-pvt-ssh-key
+
 ```
 好了，有了上面的准备，就将~/.ssh/gitexample.pub文件内容拷贝到剪切板。然后将公钥文件中的内容粘贴到GitHub的SSH公钥管理的对话框中。
 设置成功后，再用ssh命令访问GitHub，会显示一条认证成功信息并退出。在认证成功的信息中还会显示该公钥对应的用户名。
