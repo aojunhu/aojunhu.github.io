@@ -63,7 +63,11 @@ Fast-forward
 
 $ git push origin master
 ```
-上面的步骤完成了一个特性的开发，此时可以删除 本地feature01 分支 （本地分支可以任意多个，只要不推送到远程都没有关系）。
+上面的步骤完成了一个特性的开发。
+此时可以删除 本地feature01 分支 （本地分支可以任意多个，只要不推送到远程都没有关系）：
+```
+$ git branch -d feature01
+```
 
 ## 1.2. 本地新建feature02完成功能开发
 新建2个提交完成特性开发：commit3, commit4.
@@ -120,6 +124,10 @@ Date:   Mon Dec 17 12:01:50 2018 +0800
 推送到远程仓库：
 ```
 $ git push origin master
+```
+删除本地无用的hotfix分支：
+```
+$ git branch -d hotfix
 ```
 
 # 2. 文档版本打标签
