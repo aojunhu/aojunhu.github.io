@@ -77,3 +77,8 @@ firstdecors.com
 https://www.vultr.com/
 email: hxxn@126.com
 pwd:Nxxxx1
+
+# 永亨
+https://www.ocbcwhhk.com/web/home.html
+网银： id: nxxhuxx1   pwd: nqxxx1
+电话：1742587456  pwd: 1xx12xx2
