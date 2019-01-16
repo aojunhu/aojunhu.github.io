@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      使用Python实现自动化测试
+subtitle:   使用Python实现自动化测试
+date:       2019-01-16
+author:     naiquan.hu
+header-img: img/post-bg-2015.jpg
+catalog: true
+tags:
+- Python
+---
+
 # 使用Python实现自动化测试
 
 
