@@ -43,10 +43,12 @@ Specifies the value, in bytes, to be used for packing. If the compiler option /Z
 3. 将和sum_b向结构体模数对齐，该模数是【#pragma pack指定的数值】、【未指定#pragma pack时，系统默认的对齐模数8字节】和【结构体内部最大的基本数据类型成员】长度中数值较小者。结构体的长度应该是该模数的整数倍。
 ## 3.1 基本数据类型所占内存大小
 
-|  | char | bool | short | int | unsigned int | float | long | double | long long | long double | 指针 |
-| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-| 32bit编译器 | 1 | 1 | 2 | 4 | 4 | 4 | 4 | 8 | 8 | 8 | 4 |
-| 64bit编译器 | 1 | 1 | 2 | 4 | 4 | 4 | 8 | 8 | 8 | 8 | 8 |
+|             | char | bool | short | int  | unsigned int | float | long | double | long long | long double | 指针 |
+| ----------- | ---- | ---- | ----- | ---- | ------------ | ----- | ---- | ------ | --------- | ----------- | ---- |
+| 32bit编译器 | 1    | 1    | 2     | 4    | 4            | 4     | 4    | 8      | 8         | 8           | 4    |
+| 64bit编译器 | 1    | 1    | 2     | 4    | 4            | 4     | 8    | 8      | 8         | 8           | 8    |
+
+
 以下例子均按32bit编译器处理。
 
 ## 3.2 Test
