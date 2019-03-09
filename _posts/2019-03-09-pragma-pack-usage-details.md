@@ -41,7 +41,11 @@ Specifies the value, in bytes, to be used for packing. If the compiler option /Z
 1. 将结构体内所有数据成员的长度值相加，记为sum_a； 
 2. 将各数据成员内存对齐，按各自对齐模数而填充的字节数累加到和sum_a上，记为sum_b。对齐模数是【该数据成员所占内存】与【#pragma pack指定的数值】中的较小者。
 3. 将和sum_b向结构体模数对齐，该模数是【#pragma pack指定的数值】、【未指定#pragma pack时，系统默认的对齐模数8字节】和【结构体内部最大的基本数据类型成员】长度中数值较小者。结构体的长度应该是该模数的整数倍。
+
+
 ## 3.1 基本数据类型所占内存大小
+
+
 
 |             | char | bool | short | int  | unsigned int | float | long | double | long long | long double | 指针 |
 | ----------- | ---- | ---- | ----- | ---- | ------------ | ----- | ---- | ------ | --------- | ----------- | ---- |
@@ -51,7 +55,9 @@ Specifies the value, in bytes, to be used for packing. If the compiler option /Z
 
 以下例子均按32bit编译器处理。
 
+
 ## 3.2 Test
+
 ```
 #pragma pack(4)  
 typedef struct{  
@@ -67,6 +73,7 @@ typedef struct{
 ```
 总共占28Bytes。 c的偏移量为0，占1个Byte。sh占2个Byte，它的对齐模数是2（2<4，取小者），存放起始地址应该是2的整数倍，因此c后填充1个空字符，sh的起始地址是2。a占4个Byte，对齐模数是4，因此接在sh后存放即可，偏移量为4。f占4个字节，对齐模数是4，存放地址是4的整数倍，起始地址是8。p,s的起始地址分别是12,16。d占8个字节，对齐模数是4（4<8)，d从偏移地址为20处存放。存放后结构体占28个字节，是4的整数倍不用补空字符。
 
+
 | 0 | 1 | 2 | 3 |
 | ---- | ---- | ---- | ---- |
 | c | null | sh | sh|
@@ -77,7 +84,9 @@ typedef struct{
 | d | d | d | d |
 | d | d | d | d |
 
+
 调整成1byte对齐：
+
 ```
 #pragma pack(1)  
 typedef struct{  
@@ -94,6 +103,7 @@ typedef struct{
 
 总共占27Bytes。 c的偏移量为0，占1个Byte。sh占2个Byte，它的对齐模数是1（1<2，取小者），存放起始地址应该是1的整数倍，因此sh的起始地址是1。a占4个Byte，对齐模数是1，因此接在sh后存放即可，偏移量为3。f占4个字节，对齐模数是1，存放地址是1的整数倍，起始地址是7。p,s的起始地址分别是11,15。d占8个字节，对齐模数是1，d从偏移地址为19处存放。存放后结构体占27个字节。
 
+
 | 0 | 1 | 2 | 3 |
 | ---- | ---- | ---- | ---- |
 | c | sh | sh | a |
@@ -103,6 +113,7 @@ typedef struct{
 | s | s | s | d |
 | d | d | d | d |
 | d | d | d | null |
+
 
 ```
 #pragma pack(4)  
@@ -118,7 +129,9 @@ typedef struct{
 }test_t;
 #pragma pack()
 ```
+
 结果如下：
+
 
 | 0 | 1 | 2 | 3 |
 | ---- | ---- | ---- | ---- |
