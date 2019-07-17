@@ -230,3 +230,135 @@ Change this second time.
 ```
 [nqhu@art002 test]$ git reset --hard commit-id-x
 ```
+
+## 3.16. git stash 用法
+
+常用git stash命令：
+
+1. git stash save "save message" 
+执行存储时，添加备注，方便查找，只有git stash 也要可以的，但查找时不方便识别。
+
+2. git stash list  
+查看stash了哪些存储
+
+3. git stash show
+显示做了哪些改动，默认show第一个存储,如果要显示其他存贮，后面加stash@{$num}，比如第二个 git stash show stash@{1}
+
+4. git stash show -p 
+显示第一个存储的改动，如果想显示其他存存储，命令：git stash show  stash@{$num}  -p ，比如第二个：git stash show  stash@{1}  -p
+
+5. git stash apply 
+应用某个存储,但不会把存储从存储列表中删除，默认使用第一个存储,即stash@{0}，如果要使用其他个，git stash apply stash@{$num} ， 比如第二个：git stash apply stash@{1} 
+
+6. git stash pop
+命令恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下,默认为第一个stash,即stash@{0}，如果要应用并删除其他stash，命令：git stash pop stash@{$num} ，比如应用并删除第二个：git stash pop stash@{1}
+
+7. git stash drop stash@{$num} 
+丢弃stash@{$num}存储，从列表中删除这个存储
+
+8. git stash clear
+删除所有缓存的stash
+
+实例：
+查看改动：
+```
+$ git status
+On branch develop
+Your branch is up to date with 'origin/develop'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx
+        modified:   project/firmware_XIP/usr_app/usr_app.c
+        modified:   src/wifi/wifi_mac/Controller/AP-STA/iconfig.c
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+这些改动暂时不需要提交到服务器，但更新代码时可能会有冲突，所以需要暂存起来，命令如下：
+```
+$ git stash save "save this files for next using"
+warning: LF will be replaced by CRLF in project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx.
+The file will have its original line endings in your working directory
+Saved working directory and index state On develop: save this files for next using
+```
+再次查看，已经看不到改动，更新代码就不会有冲突了：
+```
+$ git status
+On branch develop
+Your branch is up to date with 'origin/develop'.
+
+nothing to commit, working tree clean
+```
+
+查看存储：
+```
+$ git stash list
+stash@{0}: On develop: save this files for next using
+```
+
+显示做了哪些改动:
+```
+$ git stash show
+ project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx | 2 +-
+ project/firmware_XIP/usr_app/usr_app.c                | 5 +++++
+ src/wifi/wifi_mac/Controller/AP-STA/iconfig.c         | 4 +---
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+```
+
+显示第一个存储的改动:
+```
+$ git stash show -p
+diff --git a/project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx b/project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx
+index e4b33e3..ea9705c 100644
+--- a/project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx
++++ b/project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx
+@@ -82,7 +82,7 @@
+             <RunUserProg1>1</RunUserProg1>
+             <RunUserProg2>1</RunUserProg2>
+             <UserProg1Name>python ..\..\..\tools\user_cmd\after_build_soc.py firmware_XIP</UserProg1Name>
+-            <UserProg2Name>..\..\..\tools\bin\mkimage.exe ln881x flashimage ..\..\..\lib\boot_ram_ln881x.bin firmware_XIP.bin flashimage.bin release=1 crp_enable=0 app_version=10 hw_version=0</UserProg2Name>
++            <UserProg2Name>..\..\..\tools\bin\mkimage.exe ln881x flashimage ..\..\bootload\bootram\keil_ln881x\boot_ram.bin firmware_XIP.bin flashimage.bin release=0 crp_enable=0 app_version=10 hw_version=0</UserProg2Name>
+             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
+             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+             <nStopA1X>0</nStopA1X>
+diff --git a/project/firmware_XIP/usr_app/usr_app.c b/project/firmware_XIP/usr_app/usr_app.c
+index 7cb2715..61b58c6 100644
+--- a/project/firmware_XIP/usr_app/usr_app.c
++++ b/project/firmware_XIP/usr_app/usr_app.c
+@@ -20,11 +20,15 @@ static OS_Thread_t g_usr_app2_thread;
+ void wifi_init_sta(void)
+ {
+     wifi_config_t wifi_config = {
++#if 0
+         .sta = {
+             .ssid     = "Tenda_444",
+             .password = "12345678",
+             0,
+         },
++#else
++    0
++#endif
+     };
+
+```
+再次使用这些stash，直接使用git stash apply或者git stash pop就可以再次导出来了。git stash apply不会把存储从存储列表中删除，git stash pop将缓存堆栈中的对应stash删除。
+```
+$ git stash pop
+On branch develop
+Your branch is up to date with 'origin/develop'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   project/firmware_XIP/keil_ln881x/firmware_XIP.uvprojx
+        modified:   project/firmware_XIP/usr_app/usr_app.c
+        modified:   src/wifi/wifi_mac/Controller/AP-STA/iconfig.c
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (c54638d9a8ca0a6a8ebb9ccc2d1025fef1ceba89)
+
+```
