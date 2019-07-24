@@ -228,7 +228,11 @@ Change this second time.
 
 ## 3.15. 回退到某一个commit
 ```
-[nqhu@art002 test]$ git reset --hard commit-id-x
+[nqhu@art002 test]$ git reset --hard HEAD^			#回退到上个版本
+[nqhu@art002 test]$ git reset --hard HEAD~3			#回退到前3次提交之前，以此类推，回退到n次提交之前
+[nqhu@art002 test]$ git reset --hard commit-id-x	#退到/进到 指定commit的sha码
+
+[nqhu@art002 test]$ git push origin HEAD --force	#强推到远程
 ```
 
 ## 3.16. 回退掉某一个commit
