@@ -231,7 +231,39 @@ Change this second time.
 [nqhu@art002 test]$ git reset --hard commit-id-x
 ```
 
-## 3.16. git stash 用法
+## 3.16. 回退掉某一个commit
+比如我的提交历史如下，我现在想删除commit_B，但是不影响commit_B之后的提交历史。
+```
+commit_C 
+
+commit_B
+
+commit_A
+```
+执行如下命令：
+```
+git rebase -i  commit_A
+```
+将commit_B这一行前面的pick改为drop，然后按照提示保存退出。至此已经删除了指定的commit，可以使用git log查看下。
+推送至远程仓库：
+```
+git push origin HEAD –force
+```
+## 3.17. 查看commit提交记录详情
+1. 查看最新的commit
+```
+git show
+```
+2. 查看指定commit hashID的所有修改：
+```
+git show commitId
+```
+3. 查看某次commit中具体某个文件的修改：
+```
+git show commitId fileName
+```
+
+## 3.18. git stash 用法
 
 常用git stash命令：
 
